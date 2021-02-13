@@ -16,6 +16,19 @@ KillTime=5000
 
 ServerList = []
 
+
+class ohai(Resource):
+    def get(self):
+        banner = '''
+        __________________    _____  ___________
+        \____    /  _____/   /  _  \ \_   _____/
+          /     /   \  ___  /  /_\  \ |    __)  
+         /     /\    \_\  \/    |    \|     \   
+        /_______ \______  /\____|__  /\___  /   
+                \/      \/         \/     \/    
+        '''   
+        return banner
+
 class Announce(Resource):
     def get(self):
        
@@ -123,6 +136,7 @@ class List(Resource):
 
         return data
 
+api.add_resource(ohai, '/')
 api.add_resource(Announce, '/announce')
 api.add_resource(List, '/list')
 
