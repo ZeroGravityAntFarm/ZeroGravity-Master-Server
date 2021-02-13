@@ -13,9 +13,7 @@ hostport=8080
 KillTime=5000
 #=============</CONFIG>=================
 
-
 ServerList = []
-
 
 class ohai(Resource):
     def get(self):
