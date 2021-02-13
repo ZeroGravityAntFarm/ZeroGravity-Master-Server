@@ -1,7 +1,7 @@
 import requests
 import socket
 from datetime import datetime
-from flask import Flask, request 
+from flask import Flask, request, make_response
 from flask_restful import Resource, Api, reqparse
 
 app = Flask(__name__)
@@ -17,24 +17,21 @@ ServerList = []
 
 class ohai(Resource):
     def get(self):
-        banner = '''
-        __________________    _____  ___________
-        \____    /  _____/   /  _  \ \_   _____/
-          /     /   \  ___  /  /_\  \ |    __)  
-         /     /\    \_\  \/    |    \|     \   
-        /_______ \______  /\____|__  /\___  /   
-                \/      \/         \/     \/    
-        '''   
+        banner = 'ZGAFv0.1'
+        
+        response = make_response(banner, 200)
+        response.mimetype = "text/plain"
+
         return banner
 
 class Announce(Resource):
     def get(self):
        
        #Proxy check, use x forwarder header for server ip
-       if proxy:
-           IP = request.headers.getlist("X-Forwarded-For")[0]
+        if proxy:
+            IP = request.headers.getlist("X-Forwarded-For")[0]
         else:
-           IP = request.remote_addr
+            IP = request.remote_addr
 
         #F your regex
         try:
@@ -49,7 +46,7 @@ class Announce(Resource):
 
         #Grab shutdown flag and validate as boolean 
         ShutdownFlag = request.args.get('shutdown')
-        if ShutdownFlag not 1 or "true":
+        if ShutdownFlag != 1 or "true":
             return {
                 result: {
                     code: 1,
@@ -68,7 +65,7 @@ class Announce(Resource):
             }
 
         #If the server sends a shutdown flag then we remove it from our db. No futher need to hit the game api.
-        if ShutdownFlag == 1 or == "true":
+        if ShutdownFlag == 1 or "true":
             for server in ServerList:
                 if server[1] == IP:
                     ServerList.remove(server)
