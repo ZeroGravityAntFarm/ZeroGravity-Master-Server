@@ -106,6 +106,7 @@ class List(Resource):
         
         #Build our return data payload with the master server list. 
         data = {
+            "listVersion": 1
             "result": {
                     "code": 0,
                     "servers": MasterList,
