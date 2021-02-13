@@ -16,7 +16,7 @@ KillTime=5000
 
 ServerList = []
 
-class ohai(Resource):
+class Ohai(Resource):
     def get(self):
         banner = 'ZGAFv0.1'
         
@@ -119,7 +119,7 @@ class List(Resource):
 
         return data
 
-api.add_resource(ohai, '/')
+api.add_resource(Ohai, '/')
 api.add_resource(Announce, '/announce')
 api.add_resource(List, '/list')
 
