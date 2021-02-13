@@ -1,5 +1,6 @@
 import requests
 import socket
+import json
 from datetime import datetime
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api, reqparse
@@ -15,7 +16,7 @@ KillTime=5000
 
 ServerList = []
 
-class Ohai(Resource):
+class ohai(Resource):
     def get(self):
         banner = 'ZGAFv0.1'
         
@@ -46,21 +47,22 @@ class Announce(Resource):
 
         #Grab shutdown flag and validate as boolean 
         ShutdownFlag = request.args.get('shutdown')
-        if ShutdownFlag != 1 or "true":
+        ValidParam = [1, 0, "true", "false"]
+        if ShutdownFlag not in ValidParam:
             return {
-                result: {
-                    code: 1,
-                    msg: "Invalid parameters, valid parameters are 'port' (int) and 'shutdown' (bool)"
+                "result": {
+                    "code": 1,
+                    "msg": "Invalid parameters, valid parameters are 'port' (int) and 'shutdown' (bool)"
                 }
             }
         
         #Grab port query parameter and validate as a real port number
         GameJsonPort = request.args.get('port')
-        if not 1 <= GameJsonPort <= 65535:
+        if not 1 <= int(GameJsonPort) <= 65535:
             return {
-                result: {
-                    code: 4,
-                    msg: "Invalid port. A valid port is in the range 1024-65535."
+                "result": {
+                    "code": 4,
+                    "msg": "Invalid port. A valid port is in the range 1024-65535."
                 }
             }
 
@@ -70,25 +72,11 @@ class Announce(Resource):
                 if server[1] == IP:
                     ServerList.remove(server)
 
-        #Query game server api for port
-        try:
-            GameJson = requests.get('http://' + ip + ':' + str(GameJsonPort))
-        except:
-            return {
-                result: {
-                    code: 2,
-                    msg: "Failed to retrieve server info JSON from " + IP
-                }
-            }
-
-        GameJson = json.loads(GameJson)
-        GamePort = GameJson['port']
-
         #Add our new server to the server list
         DewritoServer = []
         DewritoServer.append(datetime.now())
         DewritoServer.append(IP)
-        DewritoServer.append(GamePort)
+        DewritoServer.append(GameJsonPort)
 
         #Find if our requesting server is in our master list. If so, update the entry.
         for server in ServerList:
@@ -99,9 +87,9 @@ class Announce(Resource):
             ServerList.append(DewritoServer)
 
         return {
-            result: {
-                code: 0,
-                msg: "Added server to list"
+            "result": {
+                "code": 0,
+                "msg": "Added server to list"
             }
         }
 
@@ -112,7 +100,7 @@ class List(Resource):
         
         #Find all servers in our list that are not outside the kill time then add them to a sperate list. 
         for server in ServerList:
-            LifeTime = datetime.datetime.now() - server[0]
+            LifeTime = datetime.now() - server[0]
             if LifeTime.seconds < KillTime:
                 servercopy = server
                 servercopy.pop(0)
@@ -131,7 +119,7 @@ class List(Resource):
 
         return data
 
-api.add_resource(Ohai, '/')
+api.add_resource(ohai, '/')
 api.add_resource(Announce, '/announce')
 api.add_resource(List, '/list')
 
