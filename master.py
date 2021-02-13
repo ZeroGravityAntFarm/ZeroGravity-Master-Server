@@ -93,7 +93,6 @@ class Announce(Resource):
             }
         }
 
-
 class List(Resource):
     def get(self):
         MasterList = []
@@ -102,15 +101,14 @@ class List(Resource):
         for server in ServerList:
             LifeTime = datetime.now() - server[0]
             if LifeTime.seconds < KillTime:
-                servercopy = server
-                servercopy.pop(0)
-                MasterList.append(servercopy)
+                ServerRecord = str(server[1]) + ":" + str(server[2])
+                MasterList.append(ServerRecord)
         
         #Build our return data payload with the master server list. 
         data = {
             "result": {
                     "code": 0,
-                    "servers": json.dumps(MasterList),
+                    "servers": MasterList,
                     "msg": "OK"
             },
             "cache": 30,
