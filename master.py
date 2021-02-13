@@ -39,9 +39,9 @@ class Announce(Resource):
             socket.inet_aton(IP)
         except:
             return {
-                result: {
-                    code: 5,
-                    msg: "Invalid IP address."
+                "result": {
+                    "code": 5,
+                    "msg": "Invalid IP address."
                 }
             }
 
@@ -92,6 +92,7 @@ class Announce(Resource):
                 "msg": "Added server to list"
             }
         }
+
 
 class List(Resource):
     def get(self):
