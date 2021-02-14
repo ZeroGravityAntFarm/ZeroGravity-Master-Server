@@ -11,7 +11,7 @@ api = Api(app)
 #=============<CONFIG>==================
 proxy=False
 hostport=8080
-KillTime=5000
+KillTime=300
 #=============</CONFIG>=================
 
 ServerList = []
