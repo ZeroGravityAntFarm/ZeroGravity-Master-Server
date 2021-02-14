@@ -46,7 +46,7 @@ class Announce(Resource):
             }
 
         #Grab shutdown flag and validate as boolean 
-        ShutdownFlag = request.args.get('shutdown')
+        ShutdownFlag = request.args.get('shutdown', "false")
         ValidParam = ["1", "0", "true", "false"]
         if ShutdownFlag not in ValidParam:
             return {
