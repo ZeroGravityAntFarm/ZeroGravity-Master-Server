@@ -116,7 +116,10 @@ class List(Resource):
             "cache": 30,
             "listVersion": 1
         }
-
+        
+        #Enable CORS
+        data.headers.add("Access-Control-Allow-Origin", "*")
+        
         return data
 
 api.add_resource(Ohai, '/')
