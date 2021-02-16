@@ -118,9 +118,7 @@ class List(Resource):
         }
         
         #Enable CORS
-        data.headers.add("Access-Control-Allow-Origin", "*")
-        
-        return data
+        return data, 200, {'Access-Control-Allow-Origin': '*'}
 
 api.add_resource(Ohai, '/')
 api.add_resource(Announce, '/announce')
