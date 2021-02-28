@@ -5,32 +5,71 @@ from datetime import datetime
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api, reqparse
 
+#=============<CONFIG>==================
+proxy=False
+hostport=80
+KillTime=300
+banfile="banlist.json"
+#=============</CONFIG>=================
+
 app = Flask(__name__)
 api = Api(app)
 
-#=============<CONFIG>==================
-proxy=False
-hostport=8080
-KillTime=300
-#=============</CONFIG>=================
-
 ServerList = []
 
-class Ohai(Resource):
+class ohai(Resource):
+    #Simple healthcheck endpoint at the root url
     def get(self):
         banner = 'ZGAFv0.1'
-        
         response = make_response(banner, 200)
         response.mimetype = "text/plain"
 
         return banner
 
+class banlist(Resource):
+    def get(self):
+        #Check for existence of user agent header
+        try:
+            u_agent = request.headers.getlist("User-Agent")[0]
+        except:
+            return make_response("", 200)
+
+        if proxy:
+            IP = request.headers.getlist("X-Real-IP")[0]
+        else:
+            IP = request.remote_addr
+
+        #Check for a valid ed server user agent, then quickly ping the game server api page for an extra layer of verification (could even go a step further and cross reference the json data with our master server api).
+        if u_agent == "ElDewrito/0.6.1":
+            try:
+                dew_request = requests.get('http://'+ IP + ':11775')
+            except:
+                return make_response("", 200)
+
+            #If the game server api is up then return the banlist
+            if dew_request.status_code == 200:
+                try:
+                    banfile = open('banlist.json', 'r')
+                except:
+                    return make_response("", 200)
+
+                ban_list = json.loads(banfile.read())
+                b_response = make_response(ban_list, 200)
+                b_response.mimetype = "application/json"
+
+                return b_response
+
+            else:
+                return make_response("", 200)
+        else:
+            return make_response("", 200)
+
 class Announce(Resource):
     def get(self):
-       
+
        #Proxy check, use x forwarder header for server ip
         if proxy:
-            IP = request.headers.getlist("X-Forwarded-For")[0]
+            IP = request.headers.getlist("X-Real-IP")[0]
         else:
             IP = request.remote_addr
 
@@ -39,14 +78,14 @@ class Announce(Resource):
             socket.inet_aton(IP)
         except:
             return {
-                "result": {
-                    "code": 5,
-                    "msg": "Invalid IP address."
+                result: {
+                    code: 5,
+                    msg: "Invalid IP address."
                 }
             }
 
-        #Grab shutdown flag and validate as boolean 
-        ShutdownFlag = request.args.get('shutdown', "false")
+        #Grab shutdown flag and validate as boolean
+        ShutdownFlag = request.args.get('shutdown')
         ValidParam = ["1", "0", "true", "false"]
         if ShutdownFlag not in ValidParam:
             return {
@@ -55,7 +94,7 @@ class Announce(Resource):
                     "msg": "Invalid parameters, valid parameters are 'port' (int) and 'shutdown' (bool)"
                 }
             }
-        
+
         #Grab port query parameter and validate as a real port number
         GameJsonPort = request.args.get('port')
         if not 1 <= int(GameJsonPort) <= 65535:
@@ -97,15 +136,15 @@ class Announce(Resource):
 class List(Resource):
     def get(self):
         MasterList = []
-        
-        #Find all servers in our list that are not outside the kill time then add them to a sperate list. 
+
+        #Find all servers in our list that are not outside the kill time then add them to a sperate list.
         for server in ServerList:
             LifeTime = datetime.now() - server[0]
             if LifeTime.seconds < KillTime:
                 ServerRecord = str(server[1]) + ":" + str(server[2])
                 MasterList.append(ServerRecord)
-        
-        #Build our return data payload with the master server list. 
+
+        #Build our return data payload with the master server list.
         data = {
             "listVersion": 1,
             "result": {
@@ -116,13 +155,13 @@ class List(Resource):
             "cache": 30,
             "listVersion": 1
         }
-        
-        #Enable CORS
-        return data, 200, {'Access-Control-Allow-Origin': '*'}
 
-api.add_resource(Ohai, '/')
+        return data
+
+api.add_resource(ohai, '/')
 api.add_resource(Announce, '/announce')
 api.add_resource(List, '/list')
+api.add_resource(banlist, '/banlist')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=hostport, debug=False)
+    app.run(host='0.0.0.0', port=hostport, debug=True)
