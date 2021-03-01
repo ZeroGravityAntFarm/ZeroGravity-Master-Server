@@ -2,11 +2,12 @@ import requests
 import socket
 import json
 from datetime import datetime
-from flask import Flask, request, make_response
+from collections import OrderedDict
+from flask import Flask, request, make_response, jsonify, send_file
 from flask_restful import Resource, Api, reqparse
 
 #=============<CONFIG>==================
-proxy=False
+proxy=True
 hostport=80
 KillTime=300
 banfile="banlist.json"
@@ -20,7 +21,7 @@ ServerList = []
 class ohai(Resource):
     #Simple healthcheck endpoint at the root url
     def get(self):
-        banner = 'ZGAFv0.1'
+        banner = 'ZGAFv0.2'
         response = make_response(banner, 200)
         response.mimetype = "text/plain"
 
@@ -48,16 +49,8 @@ class banlist(Resource):
 
             #If the game server api is up then return the banlist
             if dew_request.status_code == 200:
-                try:
-                    banfile = open('banlist.json', 'r')
-                except:
-                    return make_response("", 200)
 
-                ban_list = json.loads(banfile.read())
-                b_response = make_response(ban_list, 200)
-                b_response.mimetype = "application/json"
-
-                return b_response
+                return send_file("banlist.json")
 
             else:
                 return make_response("", 200)
@@ -164,4 +157,4 @@ api.add_resource(List, '/list')
 api.add_resource(banlist, '/banlist')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=hostport, debug=True)
+    app.run(host='0.0.0.0', port=hostport, debug=False)
