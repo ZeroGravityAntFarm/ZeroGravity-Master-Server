@@ -15,6 +15,11 @@ sudo docker build . -t masterserver
 docker run --name edmaster -p 80:8080 -d masterserver
 ```
 
+#### View Flask Requests
+```
+ sudo docker logs masterserver
+ ```
+
 #### Routes
 ```
 /list
