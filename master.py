@@ -66,7 +66,7 @@ class Announce(Resource):
         else:
             IP = request.remote_addr
 
-        #F your regex
+        #Lazy way to sanitize IP addresses
         try:
             socket.inet_aton(IP)
         except:
