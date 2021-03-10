@@ -8,7 +8,7 @@ from flask_restful import Resource, Api, reqparse
 
 #=============<CONFIG>==================
 proxy=False
-hostport=80
+hostport=8080
 KillTime=300
 banfile="banlist.json"
 #=============</CONFIG>=================
