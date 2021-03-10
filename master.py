@@ -7,7 +7,7 @@ from flask import Flask, request, make_response, jsonify, send_file
 from flask_restful import Resource, Api, reqparse
 
 #=============<CONFIG>==================
-proxy=True
+proxy=False
 hostport=80
 KillTime=300
 banfile="banlist.json"
@@ -18,7 +18,7 @@ api = Api(app)
 
 ServerList = []
 
-class ohai(Resource):
+class Ohai(Resource):
     #Simple healthcheck endpoint at the root url
     def get(self):
         banner = 'ZGAFv0.2'
@@ -27,7 +27,7 @@ class ohai(Resource):
 
         return banner
 
-class banlist(Resource):
+class Banlist(Resource):
     def get(self):
         #Check for existence of user agent header
         try:
@@ -151,10 +151,10 @@ class List(Resource):
 
         return data
 
-api.add_resource(ohai, '/')
+api.add_resource(Ohai, '/')
 api.add_resource(Announce, '/announce')
 api.add_resource(List, '/list')
-api.add_resource(banlist, '/banlist')
+api.add_resource(Banlist, '/banlist')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=hostport, debug=False)
