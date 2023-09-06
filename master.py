@@ -5,6 +5,7 @@ from datetime import datetime
 from collections import OrderedDict
 from flask import Flask, request, make_response, jsonify, send_file
 from flask_restful import Resource, Api, reqparse
+from flask_cors import CORS
 
 #=============<CONFIG>==================
 proxy=False
@@ -14,6 +15,7 @@ banfile="banlist.json"
 #=============</CONFIG>=================
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 ServerList = []
