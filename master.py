@@ -24,7 +24,7 @@ ServerList = []
 class ohai(Resource):
     #Simple healthcheck endpoint at the root url
     def get(self):
-        banner = 'ZGAFv0.2'
+        banner = 'ZGAFv0.3'
         response = make_response(banner, 200)
         response.mimetype = "text/plain"
 
@@ -86,7 +86,7 @@ class Announce(Resource):
         except:
             return {
                 "result": {
-                    "code": 5,
+                    "code": 69420,
                     "msg": "🤡"
                 }
             }
@@ -99,7 +99,7 @@ class Announce(Resource):
             if userAgent not in ("ElDewrito/0.6.1.0", "ElDewrito/0.5.1.1"):
                 return {
                     "result": {
-                        "code": 5,
+                        "code": 69420,
                         "msg": "🤡"
                     }
                 }
@@ -107,7 +107,7 @@ class Announce(Resource):
         except:
             return {
                 "result": {
-                    "code": 5,
+                    "code": 69420,
                     "msg": "🤡"
                 }
             }
@@ -119,7 +119,7 @@ class Announce(Resource):
         if ShutdownFlag not in ValidParam:
             return {
                 "result": {
-                    "code": 1,
+                    "code": 69420,
                     "msg": "🤡"
                 }
             }
@@ -129,7 +129,7 @@ class Announce(Resource):
         if not 1 <= int(GameJsonPort) <= 65535:
             return {
                 "result": {
-                    "code": 4,
+                    "code": 69420,
                     "msg": "🤡"
                 }
             }
@@ -141,7 +141,7 @@ class Announce(Resource):
         except:
              return {
                 "result": {
-                    "code": 1,
+                    "code": 69420,
                     "msg": "🤡"
                 }
             }
@@ -149,7 +149,7 @@ class Announce(Resource):
         if not resp:
              return {
                 "result": {
-                    "code": 1,
+                    "code": 69420,
                     "msg": "🤡"
                 }
             }
