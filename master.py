@@ -20,6 +20,7 @@ api = Api(app)
 ServerList = []
 
 
+
 class ohai(Resource):
     #Simple healthcheck endpoint at the root url
     def get(self):
@@ -28,6 +29,7 @@ class ohai(Resource):
         response.mimetype = "text/plain"
 
         return banner
+
 
 
 class banlist(Resource):
@@ -47,7 +49,6 @@ class banlist(Resource):
         if u_agent == "ElDewrito/0.6.1":
             try:
                 dew_request = requests.get('http://'+ IP + ':11775')
-                
             except:
                 return send_file("banlist.json")
 
@@ -55,7 +56,6 @@ class banlist(Resource):
             if dew_request.status_code == 200:
                 try:
                     banfile = json.load(open('banlist.json', 'r'), object_pairs_hook=OrderedDict)
-                    
                 except:
                     return make_response("", 200)
 
@@ -77,14 +77,12 @@ class Announce(Resource):
        #Proxy check, use x forwarder header for server ip
         if proxy:
             IP = request.headers.getlist("X-Forwarded-For")[0]
-            
         else:
             IP = request.remote_addr
 
         #F your regex
         try:
             socket.inet_aton(IP)
-            
         except:
             return {
                 "result": {
@@ -98,7 +96,7 @@ class Announce(Resource):
         try:
             userAgent = request.headers.get("User-Agent")
 
-            if userAgent != "ElDewrito/0.6.1.0":
+            if userAgent not in ("ElDewrito/0.6.1.0", "ElDewrito/0.5.1.1"):
                 return {
                     "result": {
                         "code": 5,
@@ -173,7 +171,6 @@ class Announce(Resource):
             if DewritoServer[1] in server[1]:
                 index = ServerList.index(server)
                 ServerList[index] = DewritoServer
-                
         else:
             ServerList.append(DewritoServer)
 
@@ -217,4 +214,4 @@ api.add_resource(List, '/list')
 api.add_resource(banlist, '/banlist')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=hostport, debug=False)
+    app.run(host='0.0.0.0', port=hostport, debug=True)
