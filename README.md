@@ -12,7 +12,7 @@ sudo docker build . -t masterserver
 
 #### Launch
 ```
-docker run --name edmaster -p 80:8080 -d masterserver
+docker run --name edmaster -p 80:80 -d masterserver
 ```
 
 #### View Flask Requests
