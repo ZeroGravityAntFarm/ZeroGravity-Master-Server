@@ -96,8 +96,7 @@ class Announce(Resource):
         #Validate server user agent
         try:
             userAgent = request.headers.get("User-Agent")
-            app.logger.debug(userAgent)
-
+            
             if userAgent not in ("ElDewrito/0.6.1.0", "ElDewrito/0.5.1.1", "ElDewrito/0.7.0.0", "ElDewrito/0.7.1", "ElDewrito/0.7.2"):
                 return {
                     "result": {
@@ -216,4 +215,4 @@ api.add_resource(List, '/list')
 api.add_resource(banlist, '/banlist')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=hostport, debug=True)
+    app.run(host='0.0.0.0', port=hostport)
