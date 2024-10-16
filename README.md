@@ -1,5 +1,5 @@
 # ZeroGravity-Master-Server
-A lightweight Eldewrito Master Server and Banlist API implemented in python. Example banlist file provided.
+A lightweight Eldewrito Master Server and Banlist API implemented in python. Example banlist file provided. Supports all versions of ElDewrito. 
 
 
 ## Usage:
