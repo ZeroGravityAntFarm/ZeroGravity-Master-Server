@@ -1,6 +1,7 @@
 import requests
 import socket
 import json
+import sys
 from datetime import datetime
 from collections import OrderedDict
 from flask import Flask, request, make_response, jsonify, send_file
@@ -24,7 +25,7 @@ ServerList = []
 class ohai(Resource):
     #Simple healthcheck endpoint at the root url
     def get(self):
-        banner = 'ZGAFv0.3'
+        banner = 'ZGAFv0.2'
         response = make_response(banner, 200)
         response.mimetype = "text/plain"
 
@@ -39,20 +40,20 @@ class banlist(Resource):
             u_agent = request.headers.getlist("User-Agent")[0]
         except:
             return make_response("", 200)
-
+       
         if proxy:
             IP = request.headers.getlist("X-Real-IP")[0]
         else:
             IP = request.remote_addr
 
-        #Check for a valid ed server user agent, then quickly ping the game server api page for an extra layer of verification (could even go a step further and cross reference the json data with our master server api).
+        #Check for a valid ed server user agent, then quickly ping the game server api page for an extra layer of verification (could even go a step further and cross reference the json data with our master server api). 
         if u_agent == "ElDewrito/0.6.1":
             try:
                 dew_request = requests.get('http://'+ IP + ':11775')
             except:
                 return send_file("banlist.json")
-
-            #If the game server api is up then return the banlist
+                
+            #If the game server api is up then return the banlist 
             if dew_request.status_code == 200:
                 try:
                     banfile = json.load(open('banlist.json', 'r'), object_pairs_hook=OrderedDict)
@@ -63,7 +64,7 @@ class banlist(Resource):
                 b_response.mimetype = "application/json"
 
                 return send_file("banlist.json")
-
+                
             else:
                 return send_file("banlist.json")
         else:
@@ -73,7 +74,7 @@ class banlist(Resource):
 
 class Announce(Resource):
     def get(self):
-
+       
        #Proxy check, use x forwarder header for server ip
         if proxy:
             IP = request.headers.getlist("X-Forwarded-For")[0]
@@ -86,7 +87,7 @@ class Announce(Resource):
         except:
             return {
                 "result": {
-                    "code": 69420,
+                    "code": 5,
                     "msg": "🤡"
                 }
             }
@@ -95,41 +96,42 @@ class Announce(Resource):
         #Validate server user agent
         try:
             userAgent = request.headers.get("User-Agent")
+            app.logger.debug(userAgent)
 
-            if userAgent not in ("ElDewrito/0.6.1.0", "ElDewrito/0.5.1.1"):
+            if userAgent not in ("ElDewrito/0.6.1.0", "ElDewrito/0.5.1.1", "ElDewrito/0.7.0.0", "ElDewrito/0.7.1", "ElDewrito/0.7.2"):
                 return {
                     "result": {
-                        "code": 69420,
+                        "code": 5,
                         "msg": "🤡"
                     }
                 }
-
+        
         except:
             return {
                 "result": {
-                    "code": 69420,
+                    "code": 5,
                     "msg": "🤡"
                 }
             }
 
 
-        #Grab shutdown flag and validate as boolean
+        #Grab shutdown flag and validate as boolean 
         ShutdownFlag = request.args.get('shutdown')
         ValidParam = ["1", "0", "true", "false", None]
         if ShutdownFlag not in ValidParam:
             return {
                 "result": {
-                    "code": 69420,
+                    "code": 1,
                     "msg": "🤡"
                 }
             }
-
+        
         #Grab port query parameter and validate as a real port number
         GameJsonPort = request.args.get('port')
         if not 1 <= int(GameJsonPort) <= 65535:
             return {
                 "result": {
-                    "code": 69420,
+                    "code": 4,
                     "msg": "🤡"
                 }
             }
@@ -141,7 +143,7 @@ class Announce(Resource):
         except:
              return {
                 "result": {
-                    "code": 69420,
+                    "code": 1,
                     "msg": "🤡"
                 }
             }
@@ -149,7 +151,7 @@ class Announce(Resource):
         if not resp:
              return {
                 "result": {
-                    "code": 69420,
+                    "code": 1,
                     "msg": "🤡"
                 }
             }
@@ -186,15 +188,15 @@ class Announce(Resource):
 class List(Resource):
     def get(self):
         MasterList = []
-
-        #Find all servers in our list that are not outside the kill time then add them to a sperate list.
+        
+        #Find all servers in our list that are not outside the kill time then add them to a sperate list. 
         for server in ServerList:
             LifeTime = datetime.now() - server[0]
             if LifeTime.seconds < KillTime:
                 ServerRecord = str(server[1]) + ":" + str(server[2])
                 MasterList.append(ServerRecord)
-
-        #Build our return data payload with the master server list.
+        
+        #Build our return data payload with the master server list. 
         data = {
             "listVersion": 1,
             "result": {
