@@ -170,8 +170,9 @@ class Announce(Resource):
         #Find if our requesting server is in our master list. If so, update the entry.
         for server in ServerList:
             if DewritoServer[1] in server[1]:
-                index = ServerList.index(server)
-                ServerList[index] = DewritoServer
+                if DewritoServer[2] in server[2]:
+                    index = ServerList.index(server)
+                    ServerList[index] = DewritoServer
         else:
             ServerList.append(DewritoServer)
 
